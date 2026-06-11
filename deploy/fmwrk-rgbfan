@@ -1,0 +1,78 @@
+#!/bin/bash
+
+# Validate inputs strictly to prevent injection
+is_hex() { [[ $1 =~ ^([0-9A-Fa-f]{6}|0)$ ]]; }
+is_int() { [[ $1 =~ ^[0-9]+$ ]]; }
+is_mode() { [[ $1 =~ ^(static|sequence|random|randominput|quadspin|fullspin|smoothspin|rainbowspin|mpd)$ ]]; }
+is_effect() { [[ $1 =~ ^(blink|pulse|cwfade|ccwfade|cwccwfade)$ ]]; }
+
+OPTS=""
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -c|--colors)
+            OPTS="$OPTS -c"
+            shift
+            # Loop through subsequent args until another flag, mode, or tick is found
+            while [[ $# -gt 0 ]] && [[ ! $1 == -* ]] && ! is_mode "$1"; do
+                if is_hex "$1"; then
+                    OPTS="$OPTS $1"
+                else
+                    echo "Invalid color hex: $1"
+                    exit 1
+                fi
+                shift
+            done
+            ;;
+        -e|--effect)
+            if is_effect "$2"; then
+                OPTS="$OPTS -e $2"
+                shift 2
+            else
+                echo "Invalid effect: $2"
+                exit 1
+            fi
+            ;;
+        -p|--effect-period)
+            if is_int "$2"; then
+                OPTS="$OPTS -p $2"
+                shift 2
+            else
+                echo "Invalid effect period: $2"
+                exit 1
+            fi
+            ;;
+        -s|--speed-from-fan)
+            OPTS="$OPTS -s"
+            shift
+            ;;
+        -h|--help)
+            echo "Usage: rgbfan-wrapper [OPTIONS] <MODE> [TICK_MS]"
+            exit 0
+            ;;
+        *)
+            if is_mode "$1"; then
+                OPTS="$OPTS $1"
+            elif is_int "$1"; then
+                OPTS="$OPTS $1"
+            else
+                echo "Invalid argument: $1"
+                exit 1
+            fi
+            shift
+            ;;
+    esac
+done
+
+if ! echo "$OPTS" | grep -qE "(static|sequence|random|randominput|quadspin|fullspin|smoothspin|rainbowspin|mpd)"; then
+    echo "Error: Must specify a valid animation mode."
+    exit 1
+fi
+
+# Trim leading space
+OPTS=$(echo "$OPTS" | xargs)
+
+echo "LED_OPTS=\"$OPTS\"" | sudo tee /etc/default/fmwrk-rgbfan > /dev/null
+sudo systemctl restart fmwrk-rgbfan.service
+
+echo "Applied: framework_rgbafan $OPTS"

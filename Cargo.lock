@@ -442,8 +442,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "framework_rgbafan"
-version = "1.0.0"
+name = "framework_rgbafan_daemon"
+version = "1.0.1"
 dependencies = [
  "anyhow",
  "clap",

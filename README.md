@@ -14,32 +14,21 @@ wanted to change anything seemed like a drag.
 
 
 ## Installation
+First clone into the repositor, then install by running `make install`.
+Respectively, you can uninstall by `make uninstall`.
 
-First, grab the repository by cloning into it, and going inside and
-running `cargo build -r`. Note that wherever you do put it, it does
-need to be run as root.
+This will copy the correct scripts and whatnot to the proper places. It's
+recommended that you don't use `/usr/bin/framework_rgbafan_daemon` directly, but
+rather through the script `/usr/bin/fmwrk-rgbfan`.
 
-Then, copy the binary in `target/release` over to `/usr/local/bin` or
-some other location of your choice.
+If you want to use this in scripting and would rather not have to use sudo, add
 
-If you want to daemonize it, you might want to write something along the lines of
+    %rgbfan ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart fmwrk-rgbfan.service, /usr/bin/tee /etc/default/fmwrk-rgbfan 
+    
+To your sudoers file via `sudo visudo`. After creating a `rgbfan` group for your
+user. For example, you could automate switching to different animations and
+colors for day and night.
 
-    [Unit]
-    Description=Runs the Framework RGB fan tool
-    Before=graphical.target
-
-    [Service]
-    Type=simple
-    ExecStart=/usr/local/bin/framework_rgbafan smoothspin 0E81AD D4002A FFFFFF D4002A
-    Restart=on-failure
-    RestartSec=5
-    RemainAfterExit=yes
-
-    [Install]
-    WantedBy=multi-user.target
-
-to `/etc/systemd/system/frmwk-rgb-fan.service`, and run
-`sudo systemctl daemon-reload ; sudo systemctl enable --now frmwk-rgb-fan.service`
 
 ## Music Visualizer Usage
 
@@ -53,7 +42,7 @@ In order for MPD mode to work, ensure the following code block is in your
         format                  "44100:16:2"
     }
 
-I've configured it to be the case that low frequency bass bands, are
+It's configured to be the case that low frequency bass bands, are
 cool colors, and the high frequency bands correspond to the warm
 colors, with the rainbow being between them. If you want to change
 these, feel free to check out `mpd_visualizer::get_freq_color`.
@@ -62,10 +51,10 @@ these, feel free to check out `mpd_visualizer::get_freq_color`.
 ## CLI help text
 
 ```
-Animate your Framework computer RGB fan! Don't forget sudo! Personal favorite:
-`sudo framework_rgbafan smoothspin 20 -e cwfade -p 50`
+Animate your Framework computer RGB fan! Don't forget sudo! Example:
+`sudo fmwrk-rgbfan smoothspin 20 -e cwfade -p 50`
 
-Usage: sudo framework_rgbafan [OPTIONS] <MODE> [TICK_MS]
+Usage: sudo fmwrk-rgbfan [OPTIONS] <MODE> [TICK_MS]
 
 Arguments:
   <MODE>     Available animation modes: static, sequence, random, randominput,
