@@ -1,5 +1,14 @@
 #!/bin/bash
 
+for arg in "$@"; do
+    case $arg in
+        -h|--help|-V|--version)
+            framework_rgbafan_daemon "$arg"
+            exit 0
+            ;;
+    esac
+done
+
 # Validate inputs strictly to prevent injection
 is_hex() { [[ $1 =~ ^([0-9A-Fa-f]{6}|0)$ ]]; }
 is_int() { [[ $1 =~ ^[0-9]+$ ]]; }
