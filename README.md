@@ -54,7 +54,7 @@ these, feel free to check out `mpd_visualizer::get_freq_color`.
 Animate your Framework computer RGB fan! Don't forget sudo! Example:
 `sudo fmwrk-rgbfan smoothspin 20 -e cwfade -p 50`
 
-Usage: sudo fmwrk-rgbfan [OPTIONS] <MODE> [TICK_MS]
+Usage: sudo fmwrk-rgbfan <MODE> [OPTIONS] [TICK_MS]
 
 Arguments:
   <MODE>     Available animation modes: static, sequence, random, randominput,

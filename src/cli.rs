@@ -10,7 +10,7 @@ use clap::{ColorChoice, Parser};
     about,
     color = ColorChoice::Auto,
     long_about = None,
-    override_usage="sudo framework_rgbafan [OPTIONS] <MODE> [TICK_MS]")
+    override_usage="sudo framework_rgbafan <MODE> [OPTIONS] [TICK_MS]")
 ]
 pub struct Args {
     /// Available animation modes: static, sequence, random, randominput, quadspin, fullspin, smoothspin, rainbowspin, mpd.
